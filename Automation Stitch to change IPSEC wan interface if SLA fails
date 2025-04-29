@@ -1,0 +1,49 @@
+
+//Trigger
+config system automation-trigger
+    edit "wan"
+        set event-type event-log
+        set logid 22933
+        config fields
+            edit 1
+                set name "interface"
+                set value "wan"
+            next
+            edit 2
+                set name "healthcheck"
+                set value "google.com"
+            next
+        end
+    next
+end
+
+
+//Action
+
+config system automation-action
+    edit "CLI Script - System Status"
+        set description "Execute a CLI script to return the system status."
+        set action-type cli-script
+        set script "config vpn ipsec phase1-interface
+edit \"test\"
+set interface \"a\"
+next
+end
+end"
+        set accprofile "super_admin"
+    next
+end
+
+//stitch
+config system automation-stitch
+    edit "ipsec inter change"
+        set trigger "wan"
+        config actions
+            edit 1
+                set action "CLI Script - System Status"
+                set delay 5
+                set required enable
+            next
+        end
+    next
+end
